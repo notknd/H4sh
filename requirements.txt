@@ -1,3 +1,4 @@
 textual>=0.70,<2
 aiohttp>=3.9,<4
 dnspython>=2.6,<3
+phonenumbers>=8.13,<10
