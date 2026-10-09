@@ -9,9 +9,20 @@ import dns.asyncresolver
 from h4sh.core.validation import target_host
 
 
+def _termux_resolver() -> dns.asyncresolver.Resolver:
+    """Build a resolver without relying on Termux's optional resolv.conf file."""
+    resolver = dns.asyncresolver.Resolver(configure=False)
+    # Termux installations may not expose /etc/resolv.conf.  Explicit public
+    # resolvers keep passive DNS lookup usable in that constrained environment.
+    resolver.nameservers = ["1.1.1.1", "8.8.8.8"]
+    resolver.timeout = 3
+    resolver.lifetime = 5
+    return resolver
+
+
 async def lookup(target: str) -> dict:
     host = target_host(target)
-    resolver = dns.asyncresolver.Resolver()
+    resolver = _termux_resolver()
     async def query(record: str) -> list[str]:
         try:
             answer = await resolver.resolve(host, record, lifetime=5)

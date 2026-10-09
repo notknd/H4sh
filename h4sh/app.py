@@ -44,23 +44,25 @@ class H4shApp(App[None]):
                 yield Container(id="workspace")
         yield Footer()
 
-    def on_mount(self) -> None:
-        self.action_show("dashboard")
+    async def on_mount(self) -> None:
+        await self.action_show("dashboard")
 
-    def action_show(self, view: str) -> None:
+    async def action_show(self, view: str) -> None:
         workspace = self.query_one("#workspace", Container)
-        workspace.remove_children()
+        # Recent Textual releases remove children asynchronously. Awaiting the
+        # operation prevents stale widgets (and duplicate IDs) between views.
+        await workspace.remove_children()
         titles = {"dashboard": ("SYSTEM OVERVIEW", "Status local e escopo operacional."), "osint": ("OSINT / DNS", "Consulta pública e passiva de hostname/IP."), "web": ("WEB / TLS POSTURE", "Verificação de cabeçalhos e certificado de uma URL."), "network": ("NETWORK INVENTORY", "Use somente em ativos autorizados. Nmap é executado sem shell.")}
         self.query_one("#view-title", Static).update(titles[view][0])
         self.query_one("#view-subtitle", Static).update(titles[view][1])
         if view == "dashboard":
-            workspace.mount(Static(self._dashboard(), classes="result"))
+            await workspace.mount(Static(self._dashboard(), classes="result"))
         elif view == "osint":
-            workspace.mount(Input(placeholder="example.org ou 203.0.113.10", id="osint-target"), Button("Consultar registros", id="run-osint", variant="primary"), TextArea(id="result", read_only=True))
+            await workspace.mount(Input(placeholder="example.org ou 203.0.113.10", id="osint-target"), Button("Consultar registros", id="run-osint", variant="primary"), TextArea(id="result", read_only=True))
         elif view == "web":
-            workspace.mount(Input(placeholder="https://example.org", id="web-target"), Button("Auditar postura web", id="run-web", variant="primary"), TextArea(id="result", read_only=True))
+            await workspace.mount(Input(placeholder="https://example.org", id="web-target"), Button("Auditar postura web", id="run-web", variant="primary"), TextArea(id="result", read_only=True))
         else:
-            workspace.mount(Input(placeholder="Hostname ou IP autorizado", id="network-target"), Select(((profile, profile) for profile in PROFILES), value="Fast scan", id="scan-profile"), Button("Executar inventário", id="run-network", variant="warning"), TextArea(id="result", read_only=True))
+            await workspace.mount(Input(placeholder="Hostname ou IP autorizado", id="network-target"), Select(((profile, profile) for profile in PROFILES), value="Fast scan", id="scan-profile"), Button("Executar inventário", id="run-network", variant="warning"), TextArea(id="result", read_only=True))
 
     def _dashboard(self) -> str:
         return f"""[ H4SH STATUS ]
@@ -82,7 +84,7 @@ Tap a module on the left or use D / O / W / N."""
     async def on_button_pressed(self, event: Button.Pressed) -> None:
         button = event.button.id or ""
         if button.startswith("nav-"):
-            self.action_show(button.removeprefix("nav-"))
+            await self.action_show(button.removeprefix("nav-"))
         elif button == "export":
             self.action_export_report()
         elif button == "run-osint":
@@ -110,4 +112,3 @@ Tap a module on the left or use D / O / W / N."""
     def action_export_report(self) -> None:
         paths = export(self.store.session(), ROOT / "reports")
         self.notify("Relatórios criados: " + ", ".join(path.name for path in paths), severity="information", timeout=8)
-
