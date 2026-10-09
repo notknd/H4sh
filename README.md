@@ -8,7 +8,7 @@ checks, auditable local history, and session reports.
 
 ```sh
 pkg update && pkg install python nmap
-git clone <your-repository-url> H4sh && cd H4sh
+git clone https://github.com/notknd/H4sh.git && cd H4sh
 python -m venv .venv
 . .venv/bin/activate
 pip install -r requirements.txt
