@@ -1,0 +1,6 @@
+__pycache__/
+.venv/
+*.py[cod]
+logs/*.sqlite3
+reports/*
+!reports/.gitkeep

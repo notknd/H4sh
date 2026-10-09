@@ -1,0 +1,28 @@
+Screen {
+    background: #071014;
+    color: #c8f6f8;
+}
+
+Header { background: #0a1d23; color: #50f5ff; }
+Footer { background: #0a1d23; color: #8baeb5; }
+
+#shell { height: 1fr; }
+#nav { width: 29; min-width: 24; height: 1fr; padding: 1 1; background: #09171c; border-right: heavy #17646d; }
+#main { width: 1fr; height: 1fr; padding: 2 3; }
+#brand { color: #5df8ff; text-style: bold; margin: 1 0 2 0; }
+#view-title { color: #5df8ff; text-style: bold; margin-bottom: 1; }
+#view-subtitle { color: #91aeb1; margin-bottom: 2; }
+#workspace { height: auto; }
+.nav, #export, #run-osint, #run-web, #run-network { min-height: 3; margin-bottom: 1; width: 100%; }
+.nav { background: #102a30; border: tall #1b5058; }
+.nav:hover, .nav:focus { background: #17616a; color: white; }
+Input, Select { margin-bottom: 1; border: tall #207984; }
+TextArea { height: 1fr; min-height: 18; margin-top: 1; border: tall #17646d; background: #08151a; }
+.result { height: auto; padding: 1 2; border: tall #17646d; background: #08151a; color: #b6f6db; }
+
+@media (max-width: 70) {
+    #nav { width: 18; min-width: 18; }
+    #main { padding: 1; }
+    #brand { display: none; }
+    .nav, #export { min-height: 3; }
+}
